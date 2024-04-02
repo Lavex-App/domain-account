@@ -6,8 +6,6 @@ steps:
     args:
       - -c
       - |
-        echo $'DB_NAME: '$$DB_NAME
-        echo $'DB_URI: '$$DB_URI
         echo $'\n  DB_URI: '$$DB_URI >> ./infra/app_engine/${_ENV}.yaml
         echo $'\n  DB_NAME: '$$DB_NAME >> ./infra/app_engine/${_ENV}.yaml
         echo $'\n  SERVICE_NAME: ${_SERVICE_NAME}\n' >> ./infra/app_engine/${_ENV}.yaml
