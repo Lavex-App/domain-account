@@ -16,14 +16,51 @@ class AccountRepository(
     Repository[DocumentDatabaseService[AsyncIOMotorClient, AsyncIOMotorDatabase]],
     AccountService,
 ):
+    """A repository class responsible for interacting with a document database to manage user accounts.
+
+    This class extends `Repository`, which defines the basic repository interface, and `AccountService`,
+    which provides business logic for account-related operations.
+
+    Args:
+        provider (ProviderType): An instance of `DocumentDatabaseService` providing access to the document database.
+
+    Attributes:
+        _provider (ProviderType): The provider for accessing the document database.
+        __users_collection: Collection in the document database where user records are stored.
+
+    Methods:
+        register(port): Registers a new user account in the database.
+        find_by_phone(phone): Retrieves a user by their phone number from the database.
+
+    """
+
     def __init__(self, provider: ProviderType) -> None:
+        """Initialize the AccountRepository with a document database provider."""
         super().__init__(provider)
         self.__users_collection = self._provider.database["users"]
 
     async def register(self, port: RegisterInputPort) -> None:
+        """Register a new user account in the database.
+
+        Args:
+            port (RegisterInputPort): The input port containing user account information.
+
+        """
         await self.__users_collection.insert_one(port.model_dump())
 
     async def find_by_phone(self, phone: str) -> User:
+        """Find a user by their phone number in the database.
+
+        Args:
+            phone (str): The phone number of the user to find.
+
+        Returns:
+            User: The user object if found.
+
+        Raises:
+            UserNotFoundException: If no user is found with the provided phone number.
+
+        """
         found_user: dict[str, Any] | None = await self.__users_collection.find_one({"phone": phone})
         if found_user:
             return User(**found_user)

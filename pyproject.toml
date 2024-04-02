@@ -22,6 +22,46 @@ black = "^24.3.0"
 isort = "^5.13.2"
 pytest = "^8.1.1"
 mypy = "^1.9.0"
+flake8 = "^7.0.0"
+flake8-copyright = "^0.2.4"
+pylint = "^3.1.0"
+wily = "^1.25.0"
+
+[tool.isort]
+profile = "black"
+line_length = "120"
+known_first_party = ["commitizen", "tests"]
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.pylint]
+init-hook = "import sys; sys.path.append('./domain_account'), sys.path.append('./tests')"
+fail-under = "10"
+
+[tool.pylint.format]
+max-line-length = "120"
+
+[tool.pylint.messages_control]
+disable = [
+    "C0103",
+    "C0114",
+    "C0116",
+    "C0301",
+    "R0903",
+    "W1203",
+    "E0611",
+    "R0913",
+]
+
+[tool.pylint.similarities]
+ignore-imports = "yes"
+min-similarity-lines = "15"
 
 [build-system]
 requires = ["poetry-core"]
