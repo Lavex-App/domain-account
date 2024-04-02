@@ -79,4 +79,5 @@ class MotorManager(DocumentDatabaseService[AsyncIOMotorClient, AsyncIOMotorDatab
             AsyncIOMotorDatabase: The current instance of a Database client.
 
         """
+        self._logger.info("Database name is [%s]", self._database_name)
         return self.client[self._database_name]
