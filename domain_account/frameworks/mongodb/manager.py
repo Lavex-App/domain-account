@@ -1,4 +1,5 @@
 import logging
+import certifi
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from pymongo.errors import ConnectionFailure
@@ -42,7 +43,8 @@ class MotorManager(DocumentDatabaseService[AsyncIOMotorClient, AsyncIOMotorDatab
         """
         self.close()
         try:
-            self._client = AsyncIOMotorClient(self._database_uri, appname=self._service_name)
+            ca = certifi.where()
+            self._client = AsyncIOMotorClient(self._database_uri, appname=self._service_name, tlsCAFile=ca)
             await self._client.admin.command("ping")
         except ConnectionFailure:  # pragma: no cover
             self._logger.info("Server [%s] not available!", self._database_uri)
@@ -79,5 +81,4 @@ class MotorManager(DocumentDatabaseService[AsyncIOMotorClient, AsyncIOMotorDatab
             AsyncIOMotorDatabase: The current instance of a Database client.
 
         """
-        self._logger.info("Database name is [%s]", self._database_name)
         return self.client[self._database_name]
