@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 from domain_account.models import User

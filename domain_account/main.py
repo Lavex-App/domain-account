@@ -1,5 +1,5 @@
 from contextlib import _AsyncGeneratorContextManager, asynccontextmanager
-from typing import Any, Callable, Generator
+from typing import AsyncGenerator, Callable
 
 from environs import Env
 from fastapi import FastAPI
@@ -14,7 +14,7 @@ LifespanType = Callable[[FastAPI], _AsyncGeneratorContextManager[None]]
 
 def lifespan_dependencies(factory: FrameworksFactory) -> LifespanType:
     @asynccontextmanager
-    async def lifespan(app: FastAPI):
+    async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
         await factory.connect()
         yield
         factory.close()
@@ -33,8 +33,13 @@ def configs() -> FrameworksConfig:
 
 
 class AppBinding:
+    """Bind all dependency inversion of the project"""
+
     def __init__(self, config: FrameworksConfig) -> None:
         self.config = config
+        self.frameworks: FrameworksFactory
+        self.adapters: AdaptersFactory
+        self.business: BusinessFactory
 
     def bind_frameworks(self) -> None:
         self.frameworks = FrameworksFactory(self.config)
@@ -60,8 +65,8 @@ def simple_app(app_binding: AppBinding) -> FastAPI:
     return FastAPI(lifespan=lifespan)
 
 
-def register_routes(app: FastAPI, app_binding: AppBinding) -> None:
-    app_binding.adapters.register_routes(app)
+def register_routes(base_app: FastAPI, app_binding: AppBinding) -> None:
+    app_binding.adapters.register_routes(base_app)
 
 
 def create_app() -> FastAPI:
