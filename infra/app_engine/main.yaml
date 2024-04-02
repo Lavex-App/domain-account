@@ -4,8 +4,8 @@ inbound_services:
   - warmup
 
 instance_class: F1
-runtime: python310
-service: poc-business-task-queue
+runtime: python312
+service: default
 
 automatic_scaling:
   max_instances: 50
