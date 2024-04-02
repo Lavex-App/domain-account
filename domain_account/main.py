@@ -26,8 +26,8 @@ def configs() -> FrameworksConfig:
     env = Env(eager=True)
     env.read_env()
     return FrameworksConfig(
-        database_name=env.str("DATABASE_NAME"),
-        database_uri=env.str("DATABASE_URI"),
+        database_name=env.str("DB_NAME"),
+        database_uri=env.str("DB_URI"),
         service_name=env.str("SERVICE_NAME"),
     )
 
