@@ -1,0 +1,76 @@
+from contextlib import _AsyncGeneratorContextManager, asynccontextmanager
+from typing import Any, Callable, Generator
+
+from environs import Env
+from fastapi import FastAPI
+
+from domain_account.adapters.__factory__ import AdaptersFactory
+from domain_account.adapters.controllers.__dependencies__ import bind_controller_dependencies
+from domain_account.business.__factory__ import BusinessFactory
+from domain_account.frameworks.__factory__ import FrameworksConfig, FrameworksFactory
+
+LifespanType = Callable[[FastAPI], _AsyncGeneratorContextManager[None]]
+
+
+def lifespan_dependencies(factory: FrameworksFactory) -> LifespanType:
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        await factory.connect()
+        yield
+        factory.close()
+
+    return lifespan
+
+
+def configs() -> FrameworksConfig:
+    env = Env(eager=True)
+    env.read_env()
+    return FrameworksConfig(
+        database_name=env.str("DATABASE_NAME"),
+        database_uri=env.str("DATABASE_URI"),
+        service_name=env.str("SERVICE_NAME"),
+    )
+
+
+class AppBinding:
+    def __init__(self, config: FrameworksConfig) -> None:
+        self.config = config
+
+    def bind_frameworks(self) -> None:
+        self.frameworks = FrameworksFactory(self.config)
+
+    def bind_adapters(self) -> None:
+        self.adapters = AdaptersFactory(self.frameworks)
+
+    def bind_business(self) -> None:
+        self.business = BusinessFactory(self.adapters)
+
+    def bind_controllers(self) -> None:
+        bind_controller_dependencies(self.business)
+
+    def facade(self) -> None:
+        self.bind_frameworks()
+        self.bind_adapters()
+        self.bind_business()
+        self.bind_controllers()
+
+
+def simple_app(app_binding: AppBinding) -> FastAPI:
+    lifespan = lifespan_dependencies(factory=app_binding.frameworks)
+    return FastAPI(lifespan=lifespan)
+
+
+def register_routes(app: FastAPI, app_binding: AppBinding) -> None:
+    app_binding.adapters.register_routes(app)
+
+
+def create_app() -> FastAPI:
+    config = configs()
+    app_binding = AppBinding(config)
+    app_binding.facade()
+    base_app = simple_app(app_binding)
+    register_routes(base_app, app_binding)
+    return base_app
+
+
+app = create_app()
