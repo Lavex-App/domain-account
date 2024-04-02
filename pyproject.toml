@@ -25,6 +25,7 @@ mypy = "^1.9.0"
 flake8 = "^7.0.0"
 flake8-copyright = "^0.2.4"
 pylint = "^3.1.0"
+wily = "^1.25.0"
 
 [tool.isort]
 profile = "black"
@@ -47,7 +48,16 @@ fail-under = "10"
 max-line-length = "120"
 
 [tool.pylint.messages_control]
-disable = ["C0114", "C0116", "C0301", "R0903", "W1203", "E0611", "R0913"]
+disable = [
+    "C0103",
+    "C0114",
+    "C0116",
+    "C0301",
+    "R0903",
+    "W1203",
+    "E0611",
+    "R0913",
+]
 
 [tool.pylint.similarities]
 ignore-imports = "yes"
