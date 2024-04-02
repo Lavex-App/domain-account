@@ -12,8 +12,8 @@ from domain_account.business.account.use_case.exceptions import InvalidUserDataE
 from domain_account.business.account.use_case.register_use_case import RegisterUseCase
 from domain_account.business.ports import LoginInputPort, RegisterInputPort
 
-from .interfaces import InputDTO, OutputDTO
 from .dtos import LoginInputDTO, LoginOutputDTO, RegisterAccountInputDTO, RegisterAccountOutputDTO
+from .interfaces import InputDTO, OutputDTO
 
 account_controller = APIRouter()
 
