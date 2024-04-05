@@ -13,7 +13,7 @@ class FirebaseManager(AuthenticationService):
     This class provides methods to authenticate users using Firebase Authentication service.
     """
 
-    def __init__(self, credential: str, app_options: dict[str, str]) -> None:
+    def __init__(self, credential: str | None, app_options: dict[str, str]) -> None:
         """
         Initialize FirebaseManager with Firebase credentials and app options.
 
@@ -21,7 +21,10 @@ class FirebaseManager(AuthenticationService):
             credential (str): Firebase credentials.
             app_options (dict[str, str]): Options to initialize the Firebase app.
         """
-        self.__firebase_app = firebase_admin.initialize_app(credential, options=app_options)
+        if credential is None:
+            self.__firebase_app = firebase_admin.initialize_app()
+        else:
+            self.__firebase_app = firebase_admin.initialize_app(credential, options=app_options)
 
     def authenticate_by_token(self, token: BearerToken) -> UserUid:
         """
