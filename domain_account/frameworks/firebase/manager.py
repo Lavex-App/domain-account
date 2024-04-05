@@ -2,7 +2,6 @@ import firebase_admin
 import firebase_admin.auth
 from fastapi import status
 from fastapi.exceptions import HTTPException
-from firebase_admin import credentials
 
 from domain_account.adapters.interfaces.authentication_service import AuthenticationService, BearerToken, UserUid
 

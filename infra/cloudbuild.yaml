@@ -32,7 +32,7 @@ steps:
 availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/GOOGLE_APPLICATION_CREDENTIALS/versions/latest
-      env: "GOOGLE_APPLICATION_CREDENTIALS_PATH"
+      env: "GOOGLE_APPLICATION_CREDENTIALS"
     - versionName: projects/$PROJECT_ID/secrets/PROJECT_ID/versions/latest
       env: "PROJECT_ID"
     - versionName: projects/$PROJECT_ID/secrets/${_ENV}_${_SERVICE_TAG}_DB_URI/versions/latest
