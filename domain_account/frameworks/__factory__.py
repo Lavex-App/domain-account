@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from domain_account.adapters.__factory__ import FrameworksFactoryInterface
 
+from .firebase import FirebaseManager
 from .mongodb import MotorManager
 
 
@@ -11,6 +12,8 @@ class FrameworksConfig(TypedDict):
     database_name: str
     database_uri: str
     service_name: str
+    credentials: str
+    auth_app_options: dict[str, str]
 
 
 class FrameworksFactory(FrameworksFactoryInterface[MotorManager]):
@@ -28,7 +31,7 @@ class FrameworksFactory(FrameworksFactoryInterface[MotorManager]):
         """Initialize the FrameworksFactory with the provided configuration.
 
         Args:
-            config (FrameworksConfig): A dictionary containing configuration parameters for the framework.
+            config (FrameworksConfig): A dictionary containing configuration parameters for the frameworks.
 
         """
         self.__config = config
@@ -54,3 +57,12 @@ class FrameworksFactory(FrameworksFactoryInterface[MotorManager]):
 
         """
         return self.__manager
+
+    def authentication_framework(self) -> FirebaseManager:
+        """Get the FirebaseManager instance representing the Firebase authentication framework.
+
+        Returns:
+            FirebaseManager: An instance of FirebaseManager representing the Firebase authentication framework.
+
+        """
+        return FirebaseManager(self.__config["credentials"], self.__config["auth_app_options"])

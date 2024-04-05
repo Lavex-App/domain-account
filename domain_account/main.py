@@ -29,6 +29,8 @@ def configs() -> FrameworksConfig:
         database_name=env.str("DB_NAME"),
         database_uri=env.str("DB_URI"),
         service_name=env.str("SERVICE_NAME"),
+        credentials=env.str("GOOGLE_APPLICATION_CREDENTIALS"),
+        auth_app_options={"projectId": env.str("PROJECT_ID")},
     )
 
 
@@ -51,7 +53,8 @@ class AppBinding:
         self.business = BusinessFactory(self.adapters)
 
     def bind_controllers(self) -> None:
-        bind_controller_dependencies(self.business)
+        authentication_framework = self.frameworks.authentication_framework()
+        bind_controller_dependencies(self.business, authentication_framework)
 
     def facade(self) -> None:
         self.bind_frameworks()
