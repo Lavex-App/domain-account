@@ -1,7 +1,7 @@
 steps:
   - id: "Set App Engine variables"
     name: "gcr.io/cloud-builders/gcloud"
-    secretEnv: ["DB_URI", "DB_NAME"]
+    secretEnv: ["DB_URI", "DB_NAME", "GOOGLE_APPLICATION_CREDENTIALS_PATH", "PROJECT_ID"]
     entrypoint: "bash"
     args:
       - -c
