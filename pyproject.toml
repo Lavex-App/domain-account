@@ -15,8 +15,8 @@ gunicorn = "^21.2.0"
 pydantic = { extras = ["email", "phonenumbers"], version = "^2.6.4" }
 pydantic-extra-types = "^2.6.0"
 phonenumbers = "^8.13.33"
-passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 certifi = "^2024.2.2"
+firebase-admin = "^6.5.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.3.0"
@@ -27,6 +27,7 @@ flake8 = "^7.0.0"
 flake8-copyright = "^0.2.4"
 pylint = "^3.1.0"
 wily = "^1.25.0"
+ipython = "^8.23.0"
 
 [tool.isort]
 profile = "black"
