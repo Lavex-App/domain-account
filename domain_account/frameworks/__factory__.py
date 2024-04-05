@@ -12,7 +12,7 @@ class FrameworksConfig(TypedDict):
     database_name: str
     database_uri: str
     service_name: str
-    credentials: str
+    credentials: str | None
     auth_app_options: dict[str, str]
 
 
