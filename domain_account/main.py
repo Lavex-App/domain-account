@@ -29,7 +29,7 @@ def configs() -> FrameworksConfig:
         database_name=env.str("DB_NAME"),
         database_uri=env.str("DB_URI"),
         service_name=env.str("SERVICE_NAME"),
-        credentials=env.str("GOOGLE_APPLICATION_CREDENTIALS"),
+        credentials=env.str("GOOGLE_APPLICATION_CREDENTIALS_PATH"),
         auth_app_options={"projectId": env.str("PROJECT_ID")},
     )
 
