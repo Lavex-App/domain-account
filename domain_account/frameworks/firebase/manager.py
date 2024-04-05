@@ -22,10 +22,7 @@ class FirebaseManager(AuthenticationService):
             credential (str): Firebase credentials.
             app_options (dict[str, str]): Options to initialize the Firebase app.
         """
-        self.__firebase_app = firebase_admin.initialize_app(
-            credentials.Certificate(credential),
-            options=app_options,
-        )
+        self.__firebase_app = firebase_admin.initialize_app(credential, options=app_options)
 
     def authenticate_by_token(self, token: BearerToken) -> UserUid:
         """
