@@ -4,6 +4,7 @@ from typing import Generic, TypeVar
 from fastapi import FastAPI
 
 from domain_account.adapters.controllers.__binding__ import Binding
+from domain_account.adapters.interfaces.authentication_service import AuthenticationService
 from domain_account.adapters.interfaces.document_database_service import DocumentDatabaseService
 from domain_account.adapters.repositories.account_repository import AccountRepository
 from domain_account.business.__factory__ import AdaptersFactoryInterface
@@ -22,6 +23,10 @@ class FrameworksFactoryInterface(Generic[T_provider_co], metaclass=ABCMeta):
     @abstractmethod
     def database_framework(self) -> DocumentDatabaseService:
         """Abstract method to retrieve the database framework instance."""
+
+    @abstractmethod
+    def authentication_framework(self) -> AuthenticationService:
+        """Abstract method to retrieve the authentication framework instance."""
 
 
 class AdaptersFactory(AdaptersFactoryInterface[AccountRepository]):

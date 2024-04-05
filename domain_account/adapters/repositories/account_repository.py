@@ -1,10 +1,7 @@
-from typing import Any
-
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from domain_account.adapters.interfaces.document_database_service import DocumentDatabaseService
-from domain_account.business.account.use_case.exceptions import UserNotFoundException
-from domain_account.business.ports import RegisterInputPort, User
+from domain_account.business.ports import RegisterInputPort
 from domain_account.business.services import AccountService
 
 from .interfaces import Repository
@@ -30,7 +27,6 @@ class AccountRepository(
 
     Methods:
         register(port): Registers a new user account in the database.
-        find_by_phone(phone): Retrieves a user by their phone number from the database.
 
     """
 
@@ -47,21 +43,3 @@ class AccountRepository(
 
         """
         await self.__users_collection.insert_one(port.model_dump())
-
-    async def find_by_phone(self, phone: str) -> User:
-        """Find a user by their phone number in the database.
-
-        Args:
-            phone (str): The phone number of the user to find.
-
-        Returns:
-            User: The user object if found.
-
-        Raises:
-            UserNotFoundException: If no user is found with the provided phone number.
-
-        """
-        found_user: dict[str, Any] | None = await self.__users_collection.find_one({"phone": phone})
-        if found_user:
-            return User(**found_user)
-        raise UserNotFoundException()

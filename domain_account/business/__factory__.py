@@ -3,7 +3,6 @@ from typing import Generic
 
 from typing_extensions import TypeVar
 
-from domain_account.business.account.use_case.login_use_case import LoginUseCase
 from domain_account.business.account.use_case.register_use_case import RegisterUseCase
 
 from .services import AccountService
@@ -54,12 +53,3 @@ class BusinessFactory:
 
         """
         return RegisterUseCase(service=self.__factory.account_service())
-
-    def login_use_case(self) -> LoginUseCase:
-        """Instantiate and return a LoginUseCase with the configured account service.
-
-        Returns:
-            LoginUseCase: An instance of LoginUseCase with the configured account service.
-
-        """
-        return LoginUseCase(service=self.__factory.account_service())

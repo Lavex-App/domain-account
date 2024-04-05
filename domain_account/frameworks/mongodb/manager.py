@@ -44,7 +44,7 @@ class MotorManager(DocumentDatabaseService[AsyncIOMotorClient, AsyncIOMotorDatab
         self.close()
         try:
             ca = certifi.where()
-            self._client = AsyncIOMotorClient(self._database_uri, appname=self._service_name, tlsCAFile=ca)
+            self._client = AsyncIOMotorClient(self._database_uri, appname=self._service_name, tls=True, tlsCAFile=ca)
             await self._client.admin.command("ping")
         except ConnectionFailure:  # pragma: no cover
             self._logger.info("Server [%s] not available!", self._database_uri)

@@ -1,5 +1,3 @@
-from passlib.context import CryptContext
-
 from domain_account.business.ports import RegisterInputPort, RegisterOutputPort
 from domain_account.business.services import AccountService
 
@@ -10,8 +8,8 @@ class RegisterUseCase(UseCase[RegisterInputPort, RegisterOutputPort, AccountServ
     """Use case for user registration.
 
     This use case handles the registration of new users. It receives input data via a RegisterInputPort,
-    hashes the user's password using bcrypt, registers the user via the provided AccountService, and returns
-    a RegisterOutputPort indicating the success of the registration process.
+    registers the user via the provided AccountService, and returns a RegisterOutputPort indicating
+    the success of the registration process.
 
     Args:
         service (AccountService): An instance of AccountService providing business logic for account-related operations.
@@ -25,17 +23,14 @@ class RegisterUseCase(UseCase[RegisterInputPort, RegisterOutputPort, AccountServ
     async def __call__(self, input_port: RegisterInputPort) -> RegisterOutputPort:
         """Execute the register use case.
 
-        Hashes the user's password using bcrypt, registers the user via the provided AccountService,
-        and returns a RegisterOutputPort indicating the success of the registration process.
+        Registers a new user with the provided information via the AccountService.
 
         Args:
-            input_port (RegisterInputPort): The input port containing user account information.
+            input_port (RegisterInputPort): The input port containing user registration data.
 
         Returns:
             RegisterOutputPort: An output port containing a message indicating the success of the registration process.
 
         """
-        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        input_port.hashed_password = pwd_context.hash(input_port.hashed_password)
         await self.__account_repo.register(input_port)
         return RegisterOutputPort(msg="ok")

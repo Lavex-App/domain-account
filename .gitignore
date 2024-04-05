@@ -152,3 +152,6 @@ override.tf.json
 terraform.rc
 .terraform.lock.hcl
 .DS_Store
+
+# Credentials
+firebaseServiceAccountKey.json

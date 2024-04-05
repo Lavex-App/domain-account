@@ -1,13 +1,19 @@
 from abc import ABCMeta
 from typing import Any
 
+from fastapi import Depends, status
+from fastapi.exceptions import HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from domain_account.adapters.interfaces.authentication_service import AuthenticationService, BearerToken
 from domain_account.business.__factory__ import BusinessFactory
-from domain_account.business.account.use_case.login_use_case import LoginUseCase
 from domain_account.business.account.use_case.register_use_case import RegisterUseCase
 
 
-def bind_controller_dependencies(business_factory: BusinessFactory) -> None:
-    _ControllerDependencyManager(business_factory)
+def bind_controller_dependencies(
+    business_factory: BusinessFactory, authentication_service: AuthenticationService
+) -> None:
+    _ControllerDependencyManager(business_factory, authentication_service)
 
 
 class ControllerDependencyManagerIsNotInitializedException(RuntimeError):
@@ -31,41 +37,48 @@ class _Singleton(type):
 
 
 class _ControllerDependencyManager(metaclass=_Singleton):
-    """Responsible for retrieve the Use Cases already instantiated to the Controllers"""
+    """Responsible for retrieve the Use Cases and Authentication service already instantiated to the Controllers"""
 
-    def __init__(self, business_factory: BusinessFactory | None = None) -> None:
+    def __init__(
+        self,
+        business_factory: BusinessFactory | None = None,
+        authentication_service: AuthenticationService | None = None,
+    ) -> None:
         if business_factory:
             self.__factory = business_factory
+        if authentication_service:
+            self.__auth = authentication_service
+
+    def auth_service(self) -> AuthenticationService:
+        if self.__auth:
+            return self.__auth
+        raise ControllerDependencyManagerIsNotInitializedException()
 
     def register_use_case(self) -> RegisterUseCase:
         if self.__factory:
             return self.__factory.register_use_case()
         raise ControllerDependencyManagerIsNotInitializedException()
 
-    def login_use_case(self) -> LoginUseCase:
-        if self.__factory:
-            return self.__factory.login_use_case()
-        raise ControllerDependencyManagerIsNotInitializedException()
-
 
 class _ControllerDependency(metaclass=ABCMeta):
     """Base class which emulates the Dependency Injection of FastAPI"""
 
-    def __init__(self) -> None:
+    def __init__(self, credential: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))) -> None:
         self._dependency_manager = _ControllerDependencyManager()
+        auth = self._dependency_manager.auth_service()
+        if credential is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Bearer authentication is needed",
+                headers={"WWW-Authenticate": 'Bearer realm="auth_required"'},
+            )
+        bearer_token = BearerToken(credential.credentials)
+        self.uid = auth.authenticate_by_token(bearer_token)
 
 
-class RegisterUseCaseDependency(_ControllerDependency):
+class RegisterControllerDependencies(_ControllerDependency):
     """Brings the Register Use Case to the Register Controller through the Fast API 'Depends'"""
 
-    def __init__(self) -> None:
-        super().__init__()
-        self.execute = self._dependency_manager.register_use_case()
-
-
-class LoginUseCaseDependency(_ControllerDependency):
-    """Brings the Login Use Case to the Login Controller through the Fast API 'Depends'"""
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.execute = self._dependency_manager.login_use_case()
+    def __init__(self, credential: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))) -> None:
+        super().__init__(credential)
+        self.register_use_case = self._dependency_manager.register_use_case()
