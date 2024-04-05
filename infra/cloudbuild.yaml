@@ -8,6 +8,8 @@ steps:
       - |
         echo $'\n  DB_URI: '$$DB_URI >> ./infra/app_engine/${_ENV}.yaml
         echo $'\n  DB_NAME: '$$DB_NAME >> ./infra/app_engine/${_ENV}.yaml
+        echo $'\n  PROJECT_ID: '$$PROJECT_ID >> ./infra/app_engine/${_ENV}.yaml
+        echo $'\n  GOOGLE_APPLICATION_CREDENTIALS_PATH: '$$GOOGLE_APPLICATION_CREDENTIALS_PATH >> ./infra/app_engine/${_ENV}.yaml
         echo $'\n  SERVICE_NAME: ${_SERVICE_NAME}\n' >> ./infra/app_engine/${_ENV}.yaml
     timeout: "1600s"
 
@@ -29,6 +31,10 @@ steps:
 
 availableSecrets:
   secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/GOOGLE_APPLICATION_CREDENTIALS_PATH/versions/latest
+      env: "GOOGLE_APPLICATION_CREDENTIALS_PATH"
+    - versionName: projects/$PROJECT_ID/secrets/PROJECT_ID/versions/latest
+      env: "PROJECT_ID"
     - versionName: projects/$PROJECT_ID/secrets/${_ENV}_${_SERVICE_TAG}_DB_URI/versions/latest
       env: "DB_URI"
     - versionName: projects/$PROJECT_ID/secrets/${_ENV}_${_SERVICE_TAG}_DB_NAME/versions/latest
