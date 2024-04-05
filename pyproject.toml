@@ -12,9 +12,7 @@ motor = "^3.4.0"
 environs = "^11.0.0"
 uvicorn = "^0.29.0"
 gunicorn = "^21.2.0"
-pydantic = { extras = ["email", "phonenumbers"], version = "^2.6.4" }
-pydantic-extra-types = "^2.6.0"
-phonenumbers = "^8.13.33"
+pydantic = "^2.6.4"
 certifi = "^2024.2.2"
 firebase-admin = "^6.5.0"
 
