@@ -13,3 +13,15 @@ class RegisterOutputPort(OutputPort):
     """Output Port for register account"""
 
     msg: str
+
+
+class RetrieveUserInputPort(InputPort):
+    """Input Port for retrieve a registred user"""
+
+    uid: str
+
+
+class RetrieveUserOutputPort(User, OutputPort):
+    """Output Port for retrieve a registred user"""
+
+    msg: str

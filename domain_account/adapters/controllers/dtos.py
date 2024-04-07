@@ -11,4 +11,7 @@ class RegisterAccountOutputDTO(OutputDTO):
     """Output DTO for register account"""
 
     msg: str
-    errors: dict[str, str] | None = None
+
+
+class RetrieveUserOutputDTO(User, OutputDTO):
+    """Output DTO for retrieve an user"""
