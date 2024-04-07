@@ -31,4 +31,4 @@ class RetrieveUserUseCase(UseCase[RetrieveUserInputPort, RetrieveUserOutputPort,
 
         """
         user = await self.__service.get_user(input_port)
-        return RetrieveUserOutputPort(**user.model_dump())
+        return RetrieveUserOutputPort(**user.model_dump(), msg="ok")

@@ -1,5 +1,6 @@
 import firebase_admin
 import firebase_admin.auth
+from firebase_admin import credentials
 from fastapi import status
 from fastapi.exceptions import HTTPException
 
@@ -24,7 +25,7 @@ class FirebaseManager(AuthenticationService):
         if credential is None:
             self.__firebase_app = firebase_admin.initialize_app()
         else:
-            self.__firebase_app = firebase_admin.initialize_app(credential, options=app_options)
+            self.__firebase_app = firebase_admin.initialize_app(credentials.Certificate(credential), options=app_options)
 
     def authenticate_by_token(self, token: BearerToken) -> UserUid:
         """
