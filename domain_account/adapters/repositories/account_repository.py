@@ -1,9 +1,13 @@
+from typing import Any
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from domain_account.adapters.interfaces.document_database_service import DocumentDatabaseService
-from domain_account.business.ports import RegisterInputPort
+from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort
 from domain_account.business.services import AccountService
+from domain_account.models import User
 
+from .exceptions import UserNotFound
 from .interfaces import Repository
 
 ProviderType = DocumentDatabaseService[AsyncIOMotorClient, AsyncIOMotorDatabase]
@@ -27,6 +31,7 @@ class AccountRepository(
 
     Methods:
         register(port): Registers a new user account in the database.
+        get_user(port): Retrieves a user from the database by UID.
 
     """
 
@@ -43,3 +48,21 @@ class AccountRepository(
 
         """
         await self.__users_collection.insert_one(port.model_dump())
+
+    async def get_user(self, port: RetrieveUserInputPort) -> User:
+        """Retrieve a user from the database by UID.
+
+        Args:
+            port (RetrieveUserInputPort): The input port containing the UID of the user to retrieve.
+
+        Returns:
+            User: The user retrieved from the database.
+
+        Raises:
+            UserNotFound: If no user is found with the provided UID.
+
+        """
+        user: dict[str, Any] | None = await self.__users_collection.find_one({"uid": port.uid})
+        if user:
+            return User(**user)
+        raise UserNotFound()

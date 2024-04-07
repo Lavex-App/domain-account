@@ -3,7 +3,7 @@ from typing import Generic
 
 from typing_extensions import TypeVar
 
-from domain_account.business.account.use_case.register_use_case import RegisterUseCase
+from domain_account.business.use_case import RegisterUseCase, RetrieveUserUseCase
 
 from .services import AccountService
 
@@ -24,7 +24,8 @@ class AdaptersFactoryInterface(Generic[T_account_service_co], metaclass=ABCMeta)
 
 
 class BusinessFactory:
-    """Responsible for instantiating the Business classes with their linked dependencies.
+    """
+    Responsible for instantiating the Business classes with their linked dependencies.
 
     This class is responsible for creating instances of business classes with their required dependencies,
     particularly for the account-related use cases.
@@ -33,6 +34,9 @@ class BusinessFactory:
         adapters_factory (AdaptersFactoryInterface): An instance of a factory implementing the
             `AdaptersFactoryInterface`, providing access to the necessary adapter services.
 
+    Methods:
+        register_use_case(): Instantiate and return a RegisterUseCase with the configured account service.
+        retrieve_user_use_case(): Instantiate and return a RetrieveUserUseCase with the configured account service.
     """
 
     def __init__(self, adapters_factory: AdaptersFactoryInterface) -> None:
@@ -52,4 +56,23 @@ class BusinessFactory:
             RegisterUseCase: An instance of RegisterUseCase with the configured account service.
 
         """
-        return RegisterUseCase(service=self.__factory.account_service())
+        return RegisterUseCase(service=self.__account_service)
+
+    def retrieve_user_use_case(self) -> RetrieveUserUseCase:
+        """
+        Instantiate and return a RetrieveUserUseCase with the configured account service.
+
+        Returns:
+            RetrieveUserUseCase: An instance of RetrieveUserUseCase with the configured account service.
+        """
+        return RetrieveUserUseCase(service=self.__account_service)
+
+    @property
+    def __account_service(self) -> AccountService:
+        """
+        Retrieve the account service instance.
+
+        Returns:
+            AccountService: An instance of the account service.
+        """
+        return self.__factory.account_service()
