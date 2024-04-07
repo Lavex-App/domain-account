@@ -26,7 +26,7 @@ class UseCase(Generic[T_input, T_output_co, T_service], metaclass=ABCMeta):
         __init__(self, service: T_service) -> None: Constructor method for initializing the use case with the required service(s).
         __call__(self, input_port: T_input) -> T_output_co: Method for executing the use case logic with the provided input data.
 
-    """ # noqa: E501
+    """  # noqa: E501
 
     @abstractmethod
     def __init__(self, service: T_service) -> None:

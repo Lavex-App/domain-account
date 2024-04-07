@@ -21,7 +21,7 @@ def bind_controller_dependencies(
         business_factory (BusinessFactory): An instance of the BusinessFactory class providing business use cases.
         authentication_service (AuthenticationService): An instance of the AuthenticationService class for authentication.
 
-    """ # noqa: E501
+    """  # noqa: E501
     _ControllerDependencyManager(business_factory, authentication_service)
 
 
@@ -59,7 +59,7 @@ class _ControllerDependencyManager(metaclass=_Singleton):
         business_factory (BusinessFactory | None): An instance of the BusinessFactory class providing business use cases.
         authentication_service (AuthenticationService | None): An instance of the AuthenticationService class for authentication.
 
-    """ # noqa: E501
+    """  # noqa: E501
 
     def __init__(
         self,
@@ -133,7 +133,7 @@ class _ControllerDependency(metaclass=ABCMeta):
         Raises:
             HTTPException: If bearer authentication is needed and not provided.
 
-        """ # noqa: E501
+        """  # noqa: E501
         self._dependency_manager = _ControllerDependencyManager()
         auth = self._dependency_manager.auth_service()
         if credential is None:
@@ -158,7 +158,7 @@ class RegisterControllerDependencies(_ControllerDependency):
         Attributes:
             register_use_case (RegisterUseCase): An instance of RegisterUseCase configured with the provided dependencies.
 
-        """ # noqa: E501
+        """  # noqa: E501
         super().__init__(credential)
         self.register_use_case: RegisterUseCase = self._dependency_manager.register_use_case()
 
@@ -175,6 +175,6 @@ class RetrieveUserControllerDependencies(_ControllerDependency):
         Attributes:
             retrieve_user_use_case (RetrieveUserUseCase): An instance of RetrieveUserUseCase configured with the provided dependencies.
 
-        """ # noqa: E501
+        """  # noqa: E501
         super().__init__(credential)
         self.retrieve_user_use_case: RetrieveUserUseCase = self._dependency_manager.retrieve_user_use_case()
