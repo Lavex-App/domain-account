@@ -1,4 +1,4 @@
-from domain_account.models import User
+from domain_account.models import Address, User
 
 from .interfaces import InputPort, OutputPort
 
@@ -11,6 +11,18 @@ class RegisterInputPort(User, InputPort):
 
 class RegisterOutputPort(OutputPort):
     """Output Port for register account"""
+
+    msg: str
+
+
+class UpdateAddressInputPort(Address, InputPort):
+    """Input Port for update address"""
+
+    uid: str
+
+
+class UpdateAddressOutputPort(OutputPort):
+    """Output Port for update address"""
 
     msg: str
 

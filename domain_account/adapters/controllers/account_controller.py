@@ -8,10 +8,17 @@ from pydantic_core import ValidationError
 from domain_account.adapters.controllers.__dependencies__ import (
     RegisterControllerDependencies,
     RetrieveUserControllerDependencies,
+    UpdateAddressControllerDependencies,
 )
-from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort
+from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort, UpdateAddressInputPort
 
-from .dtos import RegisterAccountInputDTO, RegisterAccountOutputDTO, RetrieveUserOutputDTO
+from .dtos import (
+    RegisterAccountInputDTO,
+    RegisterAccountOutputDTO,
+    RetrieveUserOutputDTO,
+    UpdateAddressInputDTO,
+    UpdateAddressOutputDTO,
+)
 
 account_controller = APIRouter()
 
@@ -74,5 +81,37 @@ async def retrieve_user(
         for error in errors.errors():
             output_errors[error["type"]] = error["msg"]
             logging.info(f"Warning [Retrieve User] | {error['type']} - {error['msg']}")
+        content = {"msg": "error", "errors": output_errors}
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=content)
+
+
+@account_controller.patch(
+    "/update-address",
+    response_model=UpdateAddressOutputDTO,
+    status_code=status.HTTP_200_OK,
+)
+async def update_address(
+    dto: UpdateAddressInputDTO,
+    dependencies: Annotated[UpdateAddressControllerDependencies, Depends()],
+) -> JSONResponse | UpdateAddressOutputDTO:
+    """Update user address.
+
+    Args:
+        dto (UpdateAddressInputDTO): The input DTO containing updated address information.
+        dependencies (UpdateAddressControllerDependencies): Dependencies for updating user address.
+
+    Returns:
+        JSONResponse | UpdateAddressOutputDTO: Response containing updated user address details.
+
+    """
+    try:
+        input_port = UpdateAddressInputPort(**dto.model_dump(), uid=dependencies.uid)
+        output_port = await dependencies.update_address_use_case(input_port)
+        return UpdateAddressOutputDTO(**output_port.model_dump())
+    except ValidationError as errors:
+        output_errors = {}
+        for error in errors.errors():
+            output_errors[error["type"]] = error["msg"]
+            logging.info(f"Warning [Update Address] | {error['type']} - {error['msg']}")
         content = {"msg": "error", "errors": output_errors}
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=content)
