@@ -76,4 +76,4 @@ class AccountRepository(
         """
         update = port.model_dump()
         uid = update.pop("uid")
-        await self.__users_collection.update_one({"uid": uid}, update)
+        await self.__users_collection.update_one({"uid": uid}, {"address": update})
