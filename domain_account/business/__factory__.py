@@ -3,7 +3,7 @@ from typing import Generic
 
 from typing_extensions import TypeVar
 
-from domain_account.business.use_case import RegisterUseCase, RetrieveUserUseCase
+from domain_account.business.use_case import RegisterUseCase, RetrieveUserUseCase, UpdateAddressUseCase
 
 from .services import AccountService
 
@@ -66,6 +66,15 @@ class BusinessFactory:
             RetrieveUserUseCase: An instance of RetrieveUserUseCase with the configured account service.
         """
         return RetrieveUserUseCase(service=self.__account_service)
+
+    def update_address_use_case(self) -> UpdateAddressUseCase:
+        """
+        Instantiate and return a UpdateAddressUseCase with the configured account service.
+
+        Returns:
+            UpdateAddressUseCase: An instance of UpdateAddressUseCase with the configured account service.
+        """
+        return UpdateAddressUseCase(service=self.__account_service)
 
     @property
     def __account_service(self) -> AccountService:

@@ -3,7 +3,7 @@ from typing import Any
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from domain_account.adapters.interfaces.document_database_service import DocumentDatabaseService
-from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort
+from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort, UpdateAddressInputPort
 from domain_account.business.services import AccountService
 from domain_account.models import User
 
@@ -66,3 +66,14 @@ class AccountRepository(
         if user:
             return User(**user)
         raise UserNotFound()
+
+    async def update_address(self, port: UpdateAddressInputPort) -> None:
+        """Update a user's address in the database.
+
+        Args:
+            port (UpdateAddressInputPort): The input port containing the UID and updated address information.
+
+        """
+        update = port.model_dump()
+        uid = update.pop("uid")
+        await self.__users_collection.update_one({"uid": uid}, update)

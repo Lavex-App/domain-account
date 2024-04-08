@@ -1,4 +1,4 @@
-from domain_account.models import User
+from domain_account.models import Address, User
 
 from .interfaces import InputDTO, OutputDTO
 
@@ -9,6 +9,16 @@ class RegisterAccountInputDTO(User, InputDTO):
 
 class RegisterAccountOutputDTO(OutputDTO):
     """Output DTO for register account"""
+
+    msg: str
+
+
+class UpdateAddressInputDTO(Address, InputDTO):
+    """Input DTO for update address"""
+
+
+class UpdateAddressOutputDTO(OutputDTO):
+    """Output DTO for update address"""
 
     msg: str
 

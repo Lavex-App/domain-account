@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from domain_account.models import User
 
 from .interfaces import Service
-from .ports import RegisterInputPort, RetrieveUserInputPort
+from .ports import RegisterInputPort, RetrieveUserInputPort, UpdateAddressInputPort
 
 
 class AccountService(Service, metaclass=ABCMeta):
@@ -27,6 +27,18 @@ class AccountService(Service, metaclass=ABCMeta):
 
     @abstractmethod
     async def get_user(self, port: RetrieveUserInputPort) -> User:
+        """
+        Retrieve user information.
+
+        Args:
+            port (RetrieveUserInputPort): The input port containing the user UID.
+
+        Returns:
+            User: An instance of the User model containing user information.
+        """
+
+    @abstractmethod
+    async def update_address(self, port: UpdateAddressInputPort) -> None:
         """
         Retrieve user information.
 
