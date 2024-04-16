@@ -3,7 +3,12 @@ from typing import Any
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from domain_account.adapters.interfaces.document_database_service import DocumentDatabaseService
-from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort, UpdateAddressInputPort
+from domain_account.business.ports import (
+    RegisterInputPort,
+    RetrieveUserInputPort,
+    UpdateAddressInputPort,
+    UpdateCpfInputPort,
+)
 from domain_account.business.services import AccountService
 from domain_account.models import User
 
@@ -32,7 +37,8 @@ class AccountRepository(
     Methods:
         register(port): Registers a new user account in the database.
         get_user(port): Retrieves a user from the database by UID.
-
+        update_address(port): Updates a user's address in the database.
+        update_cpf(port): Updates a user's CPF in the database.
     """
 
     def __init__(self, provider: ProviderType) -> None:
@@ -45,7 +51,6 @@ class AccountRepository(
 
         Args:
             port (RegisterInputPort): The input port containing user account information.
-
         """
         await self.__users_collection.insert_one(port.model_dump())
 
@@ -60,7 +65,6 @@ class AccountRepository(
 
         Raises:
             UserNotFound: If no user is found with the provided UID.
-
         """
         user: dict[str, Any] | None = await self.__users_collection.find_one({"uid": port.uid})
         if user:
@@ -72,8 +76,15 @@ class AccountRepository(
 
         Args:
             port (UpdateAddressInputPort): The input port containing the UID and updated address information.
-
         """
         update = port.model_dump()
         uid = update.pop("uid")
         await self.__users_collection.update_one({"uid": uid}, {"address": update})
+
+    async def update_cpf(self, port: UpdateCpfInputPort) -> None:
+        """Update a user's CPF in the database.
+
+        Args:
+            port (UpdateCpfInputPort): The input port containing the UID and updated CPF information.
+        """
+        await self.__users_collection.update_one({"uid": port.uid}, {"cpf": port.cpf})

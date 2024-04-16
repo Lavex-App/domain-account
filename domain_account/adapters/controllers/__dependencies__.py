@@ -7,7 +7,12 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from domain_account.adapters.interfaces.authentication_service import AuthenticationService, BearerToken
 from domain_account.business.__factory__ import BusinessFactory
-from domain_account.business.use_case import RegisterUseCase, RetrieveUserUseCase, UpdateAddressUseCase
+from domain_account.business.use_case import (
+    RegisterUseCase,
+    RetrieveUserUseCase,
+    UpdateAddressUseCase,
+    UpdateCpfUseCase,
+)
 
 
 def bind_controller_dependencies(
@@ -129,6 +134,20 @@ class _ControllerDependencyManager(metaclass=_Singleton):
             return self.__factory.update_address_use_case()
         raise ControllerDependencyManagerIsNotInitializedException()
 
+    def update_cpf_use_case(self) -> UpdateCpfUseCase:
+        """Instantiate and return an UpdateCpfUseCase with the configured account service.
+
+        Returns:
+            UpdateCpfUseCase: An instance of UpdateCpfUseCase with the configured account service.
+
+        Raises:
+            ControllerDependencyManagerIsNotInitializedException: If the factory is not initialized.
+
+        """
+        if self.__factory:
+            return self.__factory.update_cpf_use_case()
+        raise ControllerDependencyManagerIsNotInitializedException()
+
 
 class _ControllerDependency(metaclass=ABCMeta):
     """Base class which emulates the Dependency Injection of FastAPI
@@ -209,3 +228,20 @@ class UpdateAddressControllerDependencies(_ControllerDependency):
         """  # noqa: E501
         super().__init__(credential)
         self.update_address_use_case: UpdateAddressUseCase = self._dependency_manager.update_address_use_case()
+
+
+class UpdateCpfControllerDependencies(_ControllerDependency):
+    """Brings the Update Address Use Case to the Update Address Controller through the Fast API 'Depends'"""
+
+    def __init__(self, credential: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))) -> None:
+        """Initialize the UpdateCpfControllerDependencies with the provided credential.
+
+        Args:
+            credential (HTTPAuthorizationCredentials, optional): An instance of HTTPAuthorizationCredentials. Defaults to Depends(HTTPBearer(auto_error=False)).
+
+        Attributes:
+            update_cpf_use_case (UpdateCpfUseCase): An instance of UpdateCpfUseCase configured with the provided dependencies.
+
+        """  # noqa: E501
+        super().__init__(credential)
+        self.update_cpf_use_case: UpdateCpfUseCase = self._dependency_manager.update_cpf_use_case()

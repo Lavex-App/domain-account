@@ -9,8 +9,14 @@ from domain_account.adapters.controllers.__dependencies__ import (
     RegisterControllerDependencies,
     RetrieveUserControllerDependencies,
     UpdateAddressControllerDependencies,
+    UpdateCpfControllerDependencies,
 )
-from domain_account.business.ports import RegisterInputPort, RetrieveUserInputPort, UpdateAddressInputPort
+from domain_account.business.ports import (
+    RegisterInputPort,
+    RetrieveUserInputPort,
+    UpdateAddressInputPort,
+    UpdateCpfInputPort,
+)
 
 from .dtos import (
     RegisterAccountInputDTO,
@@ -18,6 +24,8 @@ from .dtos import (
     RetrieveUserOutputDTO,
     UpdateAddressInputDTO,
     UpdateAddressOutputDTO,
+    UpdateCpfInputDTO,
+    UpdateCpfOutputDTO,
 )
 
 account_controller = APIRouter()
@@ -40,7 +48,6 @@ async def register_account(
 
     Returns:
         JSONResponse | RegisterAccountOutputDTO: Response containing account registration details.
-
     """
     try:
         input_port = RegisterInputPort(**dto.model_dump(), uid=dependencies.uid)
@@ -70,7 +77,6 @@ async def retrieve_user(
 
     Returns:
         JSONResponse | RetrieveUserOutputDTO: Response containing user registration details.
-
     """
     try:
         input_port = RetrieveUserInputPort(uid=dependencies.uid)
@@ -101,8 +107,7 @@ async def update_address(
         dependencies (UpdateAddressControllerDependencies): Dependencies for updating user address.
 
     Returns:
-        JSONResponse | UpdateAddressOutputDTO: Response containing updated user address details.
-
+        JSONResponse | UpdateAddressOutputDTO: Response containing a message of the request result details.
     """
     try:
         input_port = UpdateAddressInputPort(**dto.model_dump(), uid=dependencies.uid)
@@ -113,5 +118,36 @@ async def update_address(
         for error in errors.errors():
             output_errors[error["type"]] = error["msg"]
             logging.info(f"Warning [Update Address] | {error['type']} - {error['msg']}")
+        content = {"msg": "error", "errors": output_errors}
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=content)
+
+
+@account_controller.patch(
+    "/update-cpf",
+    response_model=UpdateCpfOutputDTO,
+    status_code=status.HTTP_200_OK,
+)
+async def update_cpf(
+    dto: UpdateCpfInputDTO,
+    dependencies: Annotated[UpdateCpfControllerDependencies, Depends()],
+) -> JSONResponse | UpdateCpfOutputDTO:
+    """Update user CPF.
+
+    Args:
+        dto (UpdateCpfInputDTO): The input DTO containing updated CPF information.
+        dependencies (UpdateCpfControllerDependencies): Dependencies for updating user CPF.
+
+    Returns:
+        JSONResponse | UpdateCpfOutputDTO: Response containing a message of the request result details.
+    """
+    try:
+        input_port = UpdateCpfInputPort(**dto.model_dump(), uid=dependencies.uid)
+        output_port = await dependencies.update_cpf_use_case(input_port)
+        return UpdateCpfOutputDTO(**output_port.model_dump())
+    except ValidationError as errors:
+        output_errors = {}
+        for error in errors.errors():
+            output_errors[error["type"]] = error["msg"]
+            logging.info(f"Warning [Update CPF] | {error['type']} - {error['msg']}")
         content = {"msg": "error", "errors": output_errors}
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=content)
