@@ -27,6 +27,19 @@ class UpdateAddressOutputPort(OutputPort):
     msg: str
 
 
+class UpdateCpfInputPort(InputPort):
+    """Input Port for update cpf"""
+
+    uid: str
+    cpf: str
+
+
+class UpdateCpfOutputPort(OutputPort):
+    """Output Port for update cpf"""
+
+    msg: str
+
+
 class RetrieveUserInputPort(InputPort):
     """Input Port for retrieve a registred user"""
 

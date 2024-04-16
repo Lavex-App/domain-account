@@ -23,5 +23,17 @@ class UpdateAddressOutputDTO(OutputDTO):
     msg: str
 
 
+class UpdateCpfInputDTO(InputDTO):
+    """Input DTO for update cpf"""
+
+    cpf: str
+
+
+class UpdateCpfOutputDTO(OutputDTO):
+    """Output DTO for update address"""
+
+    msg: str
+
+
 class RetrieveUserOutputDTO(User, OutputDTO):
     """Output DTO for retrieve an user"""
